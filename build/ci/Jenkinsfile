@@ -1,0 +1,80 @@
+// 전역변수 설정
+//dockerImage는 비워두기
+//registryCredential은 ecr에 접근할 젠킨스내 secret
+pipeline {
+ environment {
+ registry = "<AWS-ACCOUNT-ID>.dkr.ecr.<REGION>.amazonaws.com"
+ imagename = '<REGISTRY IMAGE>'
+ registryCredential = 'ecr:ap-northeast-2:<secret>'
+ slackchannel = '<SLACK_CHANNEL>'
+ projectrepo = '<GITHUB CODE REPO SSH>'
+ deployrepo = '<GIT MANIFEST REPO SSH>'
+ deployreponame = '<GIT MANIFEST REPO NAME>'
+ deployrepoappname = '<MANIFEST DIRECTORY POSITION>'
+ dockerImage = ''
+}
+  
+  agent any
+  stages {
+    stage('Cloning Git') {
+      steps {
+        slackSend (channel: slackchannel, color: '#00FF00', message: "${env.JOB_NAME}앱의 CI 과정이 시작되었습니다 \n Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})\n 내용 test")
+        git([url: projectrepo, branch: 'master', credentialsId: 'sshkey'])
+          }
+            }
+    stage('Building Image') {
+      steps{
+        script {
+          dockerImage = docker.build "$registry/$imagename:$BUILD_NUMBER"
+    }
+        }
+            }
+stage('Push Image') {
+    steps{
+        script {
+        docker.withRegistry( "https://$registry", registryCredential ) {
+        dockerImage.push()
+    }
+        }
+            }
+                }
+stage('Cleaning Up') {
+steps{
+sh "docker rmi $registry/$imagename:$BUILD_NUMBER"
+                }
+            }
+    stage('Deploy') {
+      steps {
+        dir(deployreponame) {
+        git([url: deployrepo, branch: 'master', credentialsId: 'sshkey'])
+      }
+        dir (deployreponame) {
+                sh "sed -i 's/$imagename:.*\$/$imagename:${env.BUILD_NUMBER}/g' $deployrepoappname/deployment.yaml"
+                sh "git add $deployrepoappname/deployment.yaml"
+                sh "git commit -m 'updated the image tag to ${env.BUILD_NUMBER}'"
+                sh 'git push --set-upstream origin master'
+                }
+        }
+            
+  }   
+  }     
+    post {
+        always {
+            echo 'One way or another, I have finished'
+        }
+        success {
+            slackSend (channel: slackchannel, color: '#00FF00', message: "빌드 완료 \n ${env.JOB_NAME}앱의 CI 과정이 성공적으로 끝났습니다 \n Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+        }
+        unstable {
+            echo 'I am unstable 1:/'
+        }
+        failure {
+            deleteDir()
+            slackSend (channel: slackchannel, color: '#00FF00', message: "빌드가 실패하였습니다 \n ${env.JOB_NAME}앱의 젠킨스 콘솔을 확인해주세요 \n Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+            slackSend (channel: '#devops-alarm', color: '#00FF00', message: "빌드가 실패하였습니다 \n ${env.JOB_NAME}앱의 젠킨스 콘솔을 확인해주세요 \n Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+        }
+        changed {
+            echo 'Things were different before...'
+        }
+    }
+}
