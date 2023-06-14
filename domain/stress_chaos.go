@@ -8,9 +8,9 @@ type StressChaosDto struct {
 }
 
 type StressChaosSpec struct {
-	ContainerNames       []string              `json:"containerNames"`
+	ContainerNames       []string              `json:"containerNames" binding:"required"`
 	Duration             string                `json:"duration,omitempty"`
-	Selector             map[string]string     `json:"selector" binding:"required"`
+	Selector             ChaosSelectors        `json:"selector" binding:"required"`
 	StressChaosStressors *StressChaosStressors `json:"stressors,omitempty"`
 	RemoteCluster        string                `json:"remoteCluster,omitempty"`
 	Mode                 string                `json:"mode" binding:"required"`
@@ -22,14 +22,16 @@ type StressChaosStressors struct {
 }
 
 type StressChaosCpu struct {
-	Load    int `json:"load"`
-	Workers int `json:"workers"`
+	Load    int      `json:"load"`
+	Workers int      `json:"workers"`
+	Options []string `json:"options,omitempty"`
 }
 
 type StressChaosMemory struct {
-	OomScoreAdj int    `json:"oom_score_adj"`
-	Size        string `json:"size"`
-	Workers     int    `json:"workers"`
+	OomScoreAdj int      `json:"oom_score_adj"`
+	Size        string   `json:"size"`
+	Workers     int      `json:"workers"`
+	Options     []string `json:"options,omitempty"`
 }
 
 func (d StressChaosDto) GetSec() int {
