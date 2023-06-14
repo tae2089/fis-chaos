@@ -25,8 +25,21 @@ func NewFisUseCase(fisClient *fis.Client, contextTimeout time.Duration) domain.F
 	}
 }
 
+func (f *fisUseCase) StartExperiment(ctx context.Context, experimentDto domain.ExperimentDto) error {
+	_, err := f.fisClient.StartExperiment(ctx, &fis.StartExperimentInput{
+		ExperimentTemplateId: aws.String(experimentDto.TemplateID),
+		Tags: map[string]string{
+			"Name": experimentDto.Name,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (f *fisUseCase) CreateStressChaos(ctx context.Context, stressChaosDto domain.StressChaosDto) (string, error) {
-	ctx, cancel := context.WithTimeout(ctx, f.contextTimeout)
+	_, cancel := context.WithTimeout(ctx, f.contextTimeout)
 	defer cancel()
 	chaosMeshCfg := config.GetChaosMeshCfg()
 	parameters := createChaosMeshParametes(chaosMeshCfg, fisTypes.Stresschaos, stressChaosDto.GetSpec())
