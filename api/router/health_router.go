@@ -10,5 +10,5 @@ import (
 func newHealthRouter(timeout time.Duration, group *gin.RouterGroup) {
 	healthRouter := handler.HealthHandler{}
 	group.GET("/healthz", healthRouter.CheckHealth)
-	group.GET("/envs", healthRouter.CheckEnv)
+	// group.GET("/envs", healthRouter.CheckEnv)
 }
