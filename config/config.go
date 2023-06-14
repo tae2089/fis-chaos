@@ -26,7 +26,7 @@ func LoadEnv() {
 
 	var err error
 
-	if os.Getenv("APP_ENV") == "local" {
+	if os.Getenv("APP_ENV") == "local" || os.Getenv("APP_ENV") == "" {
 		projectDir := getProjectDir() + "/.env"
 		err = godotenv.Load(projectDir)
 	}
