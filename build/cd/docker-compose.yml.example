@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  bclabs:
+    image: tae2089/fis-chaos:1
+    environment:
+      GIN_MODE: "debug"
+      APP_ENV: "development"
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_DEFAULT_REGION:
+      CHAOS_MESH_NAMESPACE:
+      CHAOS_MESH_KUBERNETES_ARN:
+      CHAOS_MESH_ROLE_ARN:
+    ports:
+      - "8080:8080"
