@@ -1,6 +1,10 @@
 package domain
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/tae2089/fis-chaos/types"
+)
 
 type StressChaosDto struct {
 	Fis             `json:"fis" binding:"required"`
@@ -13,7 +17,8 @@ type StressChaosSpec struct {
 	Selector             ChaosSelectors        `json:"selector" binding:"required"`
 	StressChaosStressors *StressChaosStressors `json:"stressors,omitempty"`
 	RemoteCluster        string                `json:"remoteCluster,omitempty"`
-	Mode                 string                `json:"mode" binding:"required"`
+	Mode                 types.ChaosMeshMode   `json:"mode" binding:"required"`
+	Value                string                `json:"value,omitempty"`
 }
 
 type StressChaosStressors struct {
