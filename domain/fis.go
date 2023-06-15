@@ -9,5 +9,6 @@ type Fis struct {
 
 type FisUsecase interface {
 	CreateStressChaos(ctx context.Context, stressChaos StressChaosDto) (string, error)
+	CreatePodChaos(ctx context.Context, podChaos PodChaosDto) (string, error)
 	StartExperiment(ctx context.Context, experimentDto ExperimentDto) error
 }

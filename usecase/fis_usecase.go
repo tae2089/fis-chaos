@@ -50,6 +50,19 @@ func (f *fisUseCase) CreateStressChaos(ctx context.Context, stressChaosDto domai
 	return templateID, nil
 }
 
+// CreatePodChaos implements domain.FisUsecase.
+func (f *fisUseCase) CreatePodChaos(ctx context.Context, podChaos domain.PodChaosDto) (string, error) {
+	_, cancel := context.WithTimeout(ctx, f.contextTimeout)
+	defer cancel()
+	chaosMeshCfg := config.GetChaosMeshCfg()
+	parameters := createChaosMeshParametes(chaosMeshCfg, fisTypes.Stresschaos, podChaos.GetSpec())
+	templateID, err := f.createChaosMeshTemplate(podChaos, parameters, chaosMeshCfg.KubernetesARN)
+	if err != nil {
+		return "", err
+	}
+	return templateID, nil
+}
+
 func (f *fisUseCase) createChaosMeshTemplate(chaosReader domain.ChaosReaderable, params domain.ChaosMeshParameters, kubernetesARN string) (string, error) {
 	maxDuration, err := convertToTime(chaosReader.GetSec())
 	date := time.Now()
