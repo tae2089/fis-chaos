@@ -5,24 +5,24 @@ const (
 	Awschaos             = "AWSChaos"
 	Azurechaos           = "Azurechaos"
 	Blockchaos           = "Blockchaos"
-	Dnschaos             = "DNSChaos"
+	Dnschaos             = "DNSChaos" //
 	Gcpchaos             = "GCPChaos"
 	Httpchaos            = "HTTPChaos"
 	Iochaos              = "IOChaos"
 	Jvmchaos             = "JVMChaos"
-	Kernelchaos          = "KernelChaos"
+	Kernelchaos          = "KernelChaos" //
 	Networkchaos         = "NetworkChaos"
 	Physicalmachinechaos = "PhysicalMachineChaos"
 	Physicalmachines     = "Physicalmachines"
-	Podchaos             = "PodChaos"
-	Podhttpchaos         = "PodHttpChaos"
+	Podchaos             = "PodChaos"     //
+	Podhttpchaos         = "PodHttpChaos" //
 	Podiochaos           = "PodIOChaos"
 	Podnetworkchaos      = "PodNetworkChaos"
 	Remoteclusters       = "Remoteclusters"
 	Schedules            = "Schedule"
 	Statuschecks         = "Statuschecks"
-	Stresschaos          = "StressChaos"
-	Timechaos            = "TimeChaos"
+	Stresschaos          = "StressChaos" //
+	Timechaos            = "TimeChaos"   //
 	ChaosEngine          = "ChaosEngine"
 )
 
@@ -37,4 +37,14 @@ const (
 // ChaosMeshApiVersion is the API version of the ChaosMesh API
 const (
 	ChaosMeshAPIVersionV1alpha1 string = "chaos-mesh.org/v1alpha1"
+)
+
+type ChaosMeshMode string
+
+const (
+	ONE               ChaosMeshMode = "one"
+	ALL               ChaosMeshMode = "all"
+	FIXED             ChaosMeshMode = "fixed"
+	FIXEDPERCENT      ChaosMeshMode = "fixed-percent"
+	RADNDOMMAXPERCENT               = "random-max-percent"
 )
