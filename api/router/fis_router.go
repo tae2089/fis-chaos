@@ -15,5 +15,6 @@ func newFisRouter(fisClient *fis.Client, timeout time.Duration, group *gin.Route
 		FisUsecase: fisUseCase,
 	}
 	group.POST("/stress", handler.CreateStressChaosTemplate)
+	group.POST("/pod", handler.CreateStressChaosTemplate)
 	group.POST("/start", handler.StartExperiment)
 }

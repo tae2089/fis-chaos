@@ -28,6 +28,23 @@ func (fh *FisHandler) CreateStressChaosTemplate(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"isSuccess": true, "chaosTemplateID": id})
 }
 
+func (fh *FisHandler) CreatePodChaosTemplate(c *gin.Context) {
+
+	var podChaosDto domain.PodChaosDto
+
+	if err := c.ShouldBindJSON(&podChaosDto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id, err := fh.FisUsecase.CreatePodChaos(c, podChaosDto)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"isSuccess": true, "chaosTemplateID": id})
+}
+
 func (fh *FisHandler) StartExperiment(c *gin.Context) {
 	var experimentDto domain.ExperimentDto
 
