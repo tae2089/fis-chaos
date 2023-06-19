@@ -13,19 +13,19 @@ import (
 	fisTypes "github.com/tae2089/fis-chaos/types"
 )
 
-type fisUseCase struct {
+type fisUseCasempl struct {
 	fisClient      *fis.Client
 	contextTimeout time.Duration
 }
 
 func NewFisUseCase(fisClient *fis.Client, contextTimeout time.Duration) domain.FisUsecase {
-	return &fisUseCase{
+	return &fisUseCasempl{
 		fisClient:      fisClient,
 		contextTimeout: contextTimeout,
 	}
 }
 
-func (f *fisUseCase) StartExperiment(ctx context.Context, experimentDto domain.ExperimentDto) error {
+func (f *fisUseCasempl) StartExperiment(ctx context.Context, experimentDto domain.ExperimentDto) error {
 	_, err := f.fisClient.StartExperiment(ctx, &fis.StartExperimentInput{
 		ExperimentTemplateId: aws.String(experimentDto.TemplateID),
 		Tags: map[string]string{
@@ -38,7 +38,7 @@ func (f *fisUseCase) StartExperiment(ctx context.Context, experimentDto domain.E
 	return nil
 }
 
-func (f *fisUseCase) CreateStressChaos(ctx context.Context, stressChaosDto domain.StressChaosDto) (string, error) {
+func (f *fisUseCasempl) CreateStressChaos(ctx context.Context, stressChaosDto domain.StressChaosDto) (string, error) {
 	_, cancel := context.WithTimeout(ctx, f.contextTimeout)
 	defer cancel()
 	chaosMeshCfg := config.GetChaosMeshCfg()
@@ -51,7 +51,7 @@ func (f *fisUseCase) CreateStressChaos(ctx context.Context, stressChaosDto domai
 }
 
 // CreatePodChaos implements domain.FisUsecase.
-func (f *fisUseCase) CreatePodChaos(ctx context.Context, podChaos domain.PodChaosDto) (string, error) {
+func (f *fisUseCasempl) CreatePodChaos(ctx context.Context, podChaos domain.PodChaosDto) (string, error) {
 	_, cancel := context.WithTimeout(ctx, f.contextTimeout)
 	defer cancel()
 	chaosMeshCfg := config.GetChaosMeshCfg()
@@ -63,7 +63,7 @@ func (f *fisUseCase) CreatePodChaos(ctx context.Context, podChaos domain.PodChao
 	return templateID, nil
 }
 
-func (f *fisUseCase) createChaosMeshTemplate(chaosReader domain.ChaosReaderable, params domain.ChaosMeshParameters, kubernetesARN string) (string, error) {
+func (f *fisUseCasempl) createChaosMeshTemplate(chaosReader domain.ChaosReaderable, params domain.ChaosMeshParameters, kubernetesARN string) (string, error) {
 	maxDuration, err := convertToTime(chaosReader.GetSec())
 	date := time.Now()
 	if err != nil {
